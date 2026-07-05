@@ -904,9 +904,13 @@ body.edit-unlocked .start-post-bar { display: flex; }
   .gallery-grid { width: 100%; grid-template-columns: repeat(4, 1fr); }
 
   .gallery-overlay { display: none; }
+
+  .post-card { flex: 0 0 82vw; }
 }
 
 @media (max-width: 480px) {
-  .nav-links li:nth-child(2),
-  .nav-links li:nth-child(3) { display: none; }
+  nav { padding: 0 16px; }
+  .nav-name { font-size: 13px; }
+  .nav-links { gap: 12px; }
+  .nav-links a { font-size: 11.5px; }
 }
