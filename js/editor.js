@@ -43,7 +43,10 @@ function showAuthMessage(text) {
 }
 
 // One-time upload of posts that were only ever saved to this browser's
-// localStorage, back from before Firestore was wired in.
+// localStorage, back from before Firestore was wired in. Failures are
+// skipped individually (rather than aborting) and the migrated flag is
+// always set afterward, so a single bad post can't cause every future
+// sign-in to re-upload (and duplicate) everything else.
 function migrateLocalPosts() {
   if (localStorage.getItem('paulPostsMigrated')) return;
   var saved = JSON.parse(localStorage.getItem('paulPosts') || '[]');
@@ -52,6 +55,7 @@ function migrateLocalPosts() {
     return;
   }
   var oldestFirst = saved.slice().reverse();
+  var failures = 0;
   var chain = Promise.resolve();
   oldestFirst.forEach(function (p) {
     var html = p.html;
@@ -65,14 +69,18 @@ function migrateLocalPosts() {
         html: html || '',
         images: p.images || [],
         createdAt: serverTimestamp()
+      }).catch(function () {
+        failures += 1;
       });
     });
   });
   chain.then(function () {
     localStorage.setItem('paulPostsMigrated', '1');
-    showAuthMessage('Old posts migrated to the new database.');
-  }).catch(function (err) {
-    showAuthMessage('Migration failed: ' + err.message);
+    if (failures) {
+      showAuthMessage(failures + ' old post(s) were too large to migrate and were skipped.');
+    } else {
+      showAuthMessage('Old posts migrated to the new database.');
+    }
   });
 }
 
