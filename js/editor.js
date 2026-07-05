@@ -160,11 +160,38 @@ function addPostCard(html, images, id) {
   if (images && images.length) {
     var imagesWrap = document.createElement('div');
     imagesWrap.className = 'post-images';
-    images.forEach(function (src) {
-      var img = document.createElement('img');
-      img.src = src;
-      imagesWrap.appendChild(img);
-    });
+
+    var slide = document.createElement('img');
+    slide.className = 'post-image-slide';
+    slide.src = images[0];
+    imagesWrap.appendChild(slide);
+
+    if (images.length > 1) {
+      var index = 0;
+      var prevBtn = document.createElement('button');
+      prevBtn.type = 'button';
+      prevBtn.className = 'post-image-arrow post-image-prev';
+      prevBtn.setAttribute('aria-label', 'Previous image');
+      prevBtn.innerHTML = '&#8249;';
+      prevBtn.addEventListener('click', function () {
+        index = (index - 1 + images.length) % images.length;
+        slide.src = images[index];
+      });
+
+      var nextBtn = document.createElement('button');
+      nextBtn.type = 'button';
+      nextBtn.className = 'post-image-arrow post-image-next';
+      nextBtn.setAttribute('aria-label', 'Next image');
+      nextBtn.innerHTML = '&#8250;';
+      nextBtn.addEventListener('click', function () {
+        index = (index + 1) % images.length;
+        slide.src = images[index];
+      });
+
+      imagesWrap.appendChild(prevBtn);
+      imagesWrap.appendChild(nextBtn);
+    }
+
     card.appendChild(imagesWrap);
   }
 
