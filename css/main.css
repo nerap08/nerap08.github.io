@@ -526,8 +526,8 @@ body.edit-unlocked .post-delete { display: flex; }
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--surface);
-  border: 1px dashed var(--border);
+  background: var(--surface) url("../img/pfp.png") center / cover no-repeat;
+  border: 1px solid var(--border);
   flex-shrink: 0;
 }
 
@@ -750,8 +750,8 @@ body.edit-unlocked .start-post-bar { display: flex; }
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: var(--surface);
-  border: 1px dashed var(--border);
+  background: var(--surface) url("../img/pfp.png") center / cover no-repeat;
+  border: 1px solid var(--border);
   flex-shrink: 0;
 }
 

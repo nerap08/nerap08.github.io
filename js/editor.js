@@ -88,16 +88,14 @@ function sanitizeComposerHtml(html) {
           node.removeChild(child);
           return;
         }
+        var pendingHref = child.tagName === 'A' ? (child.getAttribute('data-href') || '').trim() : '';
         Array.prototype.slice.call(child.attributes).forEach(function (attr) {
           child.removeAttribute(attr.name);
         });
-        if (child.tagName === 'A') {
-          var href = (child.getAttribute('data-href') || '').trim();
-          if (/^https?:\/\//i.test(href)) {
-            child.setAttribute('href', href);
-            child.setAttribute('target', '_blank');
-            child.setAttribute('rel', 'noopener noreferrer');
-          }
+        if (child.tagName === 'A' && /^https?:\/\//i.test(pendingHref)) {
+          child.setAttribute('href', pendingHref);
+          child.setAttribute('target', '_blank');
+          child.setAttribute('rel', 'noopener noreferrer');
         }
       } else if (child.nodeType !== 3) {
         node.removeChild(child);
