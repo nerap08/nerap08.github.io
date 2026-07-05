@@ -478,6 +478,7 @@ a.project-card:hover { background: var(--surface); }
 /* ── Posts ── */
 .posts-scroll {
   display: flex;
+  align-items: flex-start;
   gap: 16px;
   overflow-x: auto;
   padding-bottom: 12px;
