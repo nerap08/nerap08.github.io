@@ -42,7 +42,7 @@ function handleCredentialResponse(response) {
     document.body.classList.add('edit-unlocked');
     showAuthMessage('Signed in as ' + payload.email);
   } else {
-    showAuthMessage('This isn\'t ' + AUTHORIZED_EMAIL + ' — not unlocking.');
+    showAuthMessage('Wrong Google account. Not signing in.');
   }
 }
 
@@ -71,8 +71,41 @@ if (trigger) {
 }
 
 // ── Posts feed + composer ──────────────────────────────────────────────
-function formatPostDate(d) {
-  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+
+// Only a small whitelist of tags survives from the composer into a saved
+// post — keeps localStorage-rendered HTML from being an arbitrary XSS sink.
+function sanitizeComposerHtml(html) {
+  var ALLOWED_TAGS = { A: 1, BR: 1, B: 1, STRONG: 1, I: 1, EM: 1, DIV: 1, P: 1, SPAN: 1 };
+  var container = document.createElement('div');
+  container.innerHTML = html;
+
+  (function clean(node) {
+    Array.prototype.slice.call(node.childNodes).forEach(function (child) {
+      if (child.nodeType === 1) {
+        clean(child);
+        if (!ALLOWED_TAGS[child.tagName]) {
+          while (child.firstChild) node.insertBefore(child.firstChild, child);
+          node.removeChild(child);
+          return;
+        }
+        Array.prototype.slice.call(child.attributes).forEach(function (attr) {
+          child.removeAttribute(attr.name);
+        });
+        if (child.tagName === 'A') {
+          var href = (child.getAttribute('data-href') || '').trim();
+          if (/^https?:\/\//i.test(href)) {
+            child.setAttribute('href', href);
+            child.setAttribute('target', '_blank');
+            child.setAttribute('rel', 'noopener noreferrer');
+          }
+        }
+      } else if (child.nodeType !== 3) {
+        node.removeChild(child);
+      }
+    });
+  })(container);
+
+  return container.innerHTML;
 }
 
 function deletePostFromStorage(id) {
@@ -84,12 +117,12 @@ function deletePostFromStorage(id) {
 function wireDeleteButton(btn, card) {
   btn.addEventListener('click', function () {
     var id = card.getAttribute('data-id');
-    if (id && id !== 'placeholder') deletePostFromStorage(id);
+    if (id) deletePostFromStorage(id);
     card.remove();
   });
 }
 
-function addPostCard(text, dateStr, images, id) {
+function addPostCard(html, images, id) {
   var scroll = document.querySelector('.posts-scroll');
   if (!scroll) return;
 
@@ -103,15 +136,9 @@ function addPostCard(text, dateStr, images, id) {
   var avatar = document.createElement('div');
   avatar.className = 'post-avatar';
 
-  var nameWrap = document.createElement('div');
   var name = document.createElement('p');
   name.className = 'post-name';
   name.textContent = 'Paul Trusov';
-  var date = document.createElement('p');
-  date.className = 'post-date';
-  date.textContent = dateStr;
-  nameWrap.appendChild(name);
-  nameWrap.appendChild(date);
 
   var deleteBtn = document.createElement('button');
   deleteBtn.type = 'button';
@@ -121,60 +148,56 @@ function addPostCard(text, dateStr, images, id) {
   wireDeleteButton(deleteBtn, card);
 
   head.appendChild(avatar);
-  head.appendChild(nameWrap);
+  head.appendChild(name);
   head.appendChild(deleteBtn);
   card.appendChild(head);
 
-  if (text) {
+  if (html) {
     var body = document.createElement('p');
     body.className = 'post-text';
-    body.textContent = text;
+    body.innerHTML = html;
     card.appendChild(body);
   }
 
-  (images || []).forEach(function (src) {
-    var img = document.createElement('img');
-    img.src = src;
-    img.style.width = '100%';
-    img.style.borderRadius = '6px';
-    img.style.marginTop = '10px';
-    card.appendChild(img);
-  });
+  if (images && images.length) {
+    var imagesWrap = document.createElement('div');
+    imagesWrap.className = 'post-images';
+    images.forEach(function (src) {
+      var img = document.createElement('img');
+      img.src = src;
+      imagesWrap.appendChild(img);
+    });
+    card.appendChild(imagesWrap);
+  }
 
   scroll.insertBefore(card, scroll.firstChild);
 }
 
 function loadSavedPosts() {
   var saved = JSON.parse(localStorage.getItem('paulPosts') || '[]');
-  saved.forEach(function (p) { addPostCard(p.text, p.date, p.images, p.id); });
+  saved.forEach(function (p) { addPostCard(p.html, p.images, p.id); });
 }
 
-function savePost(text, dateStr, images, id) {
+function savePost(html, images, id) {
   var saved = JSON.parse(localStorage.getItem('paulPosts') || '[]');
-  saved.unshift({ id: id, text: text, date: dateStr, images: images });
+  saved.unshift({ id: id, html: html, images: images });
   localStorage.setItem('paulPosts', JSON.stringify(saved));
 }
 
 loadSavedPosts();
 
-document.querySelectorAll('.post-card[data-id] .post-delete').forEach(function (btn) {
-  var card = btn.closest('.post-card');
-  if (card.getAttribute('data-id') === 'placeholder') wireDeleteButton(btn, card);
-});
-
 var openComposerBtn = document.getElementById('open-composer');
 var composer = document.getElementById('post-composer');
 var composerClose = document.getElementById('composer-close');
 var composerText = document.getElementById('composer-text');
-var composerCounter = document.getElementById('composer-counter');
+var composerLinkBtn = document.getElementById('composer-link-btn');
 var composerImageInput = document.getElementById('composer-image-input');
 var composerImagePreview = document.getElementById('composer-image-preview');
 var composerSubmit = document.getElementById('composer-submit');
 var pendingImages = [];
 
 function resetComposer() {
-  composerText.value = '';
-  composerCounter.textContent = '0/3000';
+  composerText.innerHTML = '';
   pendingImages = [];
   composerImagePreview.innerHTML = '';
 }
@@ -217,9 +240,28 @@ if (openComposerBtn && composer) {
     if (e.target === composer) composer.classList.remove('modal-open');
   });
 
+  // Contenteditable leaves a stray <br> behind after the last character is
+  // deleted, which defeats the :empty CSS placeholder — clear it out.
   composerText.addEventListener('input', function () {
-    composerCounter.textContent = composerText.value.length + '/3000';
+    if (composerText.innerHTML === '<br>') composerText.innerHTML = '';
   });
+
+  if (composerLinkBtn) {
+    composerLinkBtn.addEventListener('click', function () {
+      var selection = window.getSelection();
+      if (!selection || selection.isCollapsed || !composerText.contains(selection.anchorNode)) {
+        showAuthMessage('Select some text in the post first, then click the link icon.');
+        return;
+      }
+      var url = window.prompt('Link URL:');
+      if (!url) return;
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      document.execCommand('createLink', false, '#');
+      var node = window.getSelection().anchorNode;
+      var a = node && (node.nodeType === 1 ? node.closest('a') : node.parentElement && node.parentElement.closest('a'));
+      if (a) a.setAttribute('data-href', url);
+    });
+  }
 
   composerImageInput.addEventListener('change', function () {
     Array.prototype.forEach.call(composerImageInput.files, function (file) {
@@ -234,12 +276,12 @@ if (openComposerBtn && composer) {
   });
 
   composerSubmit.addEventListener('click', function () {
-    var text = composerText.value.trim();
-    if (!text && pendingImages.length === 0) return;
-    var dateStr = formatPostDate(new Date());
+    var html = sanitizeComposerHtml(composerText.innerHTML);
+    var hasText = composerText.textContent.trim().length > 0;
+    if (!hasText && pendingImages.length === 0) return;
     var id = Date.now().toString();
-    addPostCard(text, dateStr, pendingImages, id);
-    savePost(text, dateStr, pendingImages, id);
+    addPostCard(html, pendingImages, id);
+    savePost(html, pendingImages, id);
     composer.classList.remove('modal-open');
     resetComposer();
   });

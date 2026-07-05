@@ -537,15 +537,33 @@ body.edit-unlocked .post-delete { display: flex; }
   color: var(--text);
 }
 
-.post-date {
-  font-size: 11.5px;
-  color: var(--muted);
-}
-
 .post-text {
   font-size: 13px;
   line-height: 1.6;
   color: var(--text);
+  white-space: pre-wrap;
+}
+
+.post-text a,
+.composer-textarea a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.post-images {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-top: 10px;
+  padding-bottom: 4px;
+}
+
+.post-images img {
+  flex: 0 0 200px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 6px;
+  scroll-snap-align: start;
 }
 
 /* ── Footer ── */
@@ -756,26 +774,35 @@ body.edit-unlocked .start-post-bar { display: flex; }
   width: 100%;
   min-height: 160px;
   border: none;
-  resize: none;
   font-family: inherit;
   font-size: 15px;
   color: var(--text);
   background: transparent;
   line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .composer-textarea:focus { outline: none; }
 
+.composer-textarea:empty::before {
+  content: attr(data-placeholder);
+  color: var(--muted);
+  pointer-events: none;
+}
+
 .composer-image-preview {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  display: flex;
+  overflow-x: auto;
   gap: 8px;
   margin: 12px 0;
+  padding-bottom: 4px;
 }
 
 .composer-image-thumb {
   position: relative;
-  aspect-ratio: 1 / 1;
+  flex: 0 0 100px;
+  height: 100px;
   border-radius: 6px;
   overflow: hidden;
   border: 1px solid var(--border);
@@ -830,26 +857,6 @@ body.edit-unlocked .start-post-bar { display: flex; }
 }
 
 .composer-icon-btn:hover { background: var(--surface); }
-
-.composer-enhance {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--muted);
-  font-size: 12.5px;
-  font-weight: 500;
-  cursor: not-allowed;
-}
-
-.composer-counter {
-  font-size: 12px;
-  color: var(--muted);
-  margin-left: auto;
-}
 
 .composer-footer {
   display: flex;
