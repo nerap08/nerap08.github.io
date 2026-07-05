@@ -26,34 +26,41 @@
   <main>
 
     <section id="projects" class="section-first">
-      <p class="section-label">Projects</p>
+      <p class="section-label">Projects<span class="section-hint">(hover over images)</span></p>
       <div class="projects-list">
 
         <div class="project-card">
           <div class="project-body">
-            <p class="project-name">GateAgent</p>
+            <p class="project-name">Foilpal</p>
             <p class="project-desc">
-              [Add project description here.]
+              Wearable, ML-powered wingfoiling trainer that analyzes motion and gives real-time
+              light cues to improve balance and reduce falls. Integrated an IMU, GPS, LEDs, and
+              a Raspberry Pi to collect movement data and adapt feedback based on prior riding
+              patterns.
+              <a class="project-link" href="https://www.foilpal.com" target="_blank" rel="noopener">Visit foilpal.com</a>
             </p>
+            <div class="project-tags">
+              <span class="tag">Python</span>
+              <span class="tag">LSTM</span>
+              <span class="tag">Raspberry Pi</span>
+              <span class="tag">Sensor fusion</span>
+            </div>
           </div>
           <div class="project-gallery">
             <div class="gallery-grid">
-              <div class="gallery-thumb"></div>
-              <div class="gallery-thumb"></div>
-              <div class="gallery-thumb"></div>
-              <div class="gallery-thumb"></div>
+              <div class="gallery-thumb"><img src="img/foilpal/foilpal-1.png" alt="Foilpal electronics enclosure" /></div>
+              <div class="gallery-thumb"><img src="img/foilpal/foilpal-2.png" alt="Wingfoiling with Foilpal" /></div>
+              <div class="gallery-thumb"><img src="img/foilpal/foilpal-3.png" alt="Testing the Foilpal balance board indoors" /></div>
+              <div class="gallery-thumb"><img src="img/foilpal/foilpal-4.png" alt="Foilpal wing and foil board in the water" /></div>
             </div>
             <div class="gallery-overlay">
               <button class="gallery-close" aria-label="Close">&times;</button>
               <div class="gallery-overlay-grid">
-                <div class="gallery-overlay-thumb"></div>
-                <div class="gallery-overlay-thumb"></div>
-                <div class="gallery-overlay-thumb"></div>
-                <div class="gallery-overlay-thumb"></div>
-                <div class="gallery-overlay-thumb"></div>
-                <div class="gallery-overlay-thumb"></div>
-                <div class="gallery-overlay-thumb"></div>
-                <div class="gallery-overlay-thumb"></div>
+                <div class="gallery-overlay-thumb"><img src="img/foilpal/foilpal-1.png" alt="Foilpal electronics enclosure" /></div>
+                <div class="gallery-overlay-thumb"><img src="img/foilpal/foilpal-2.png" alt="Wingfoiling with Foilpal" /></div>
+                <div class="gallery-overlay-thumb"><img src="img/foilpal/foilpal-3.png" alt="Testing the Foilpal balance board indoors" /></div>
+                <div class="gallery-overlay-thumb"><img src="img/foilpal/foilpal-4.png" alt="Foilpal wing and foil board in the water" /></div>
+                <div class="gallery-overlay-thumb"><img src="img/foilpal/foilpal-5.png" alt="Wingfoiling with Foilpal, silhouette" /></div>
               </div>
             </div>
           </div>
@@ -67,6 +74,7 @@
               against an ML-generated personalized "healthy twin" and delivers real-time
               corrective feedback. Recognized at YHack and featured on the official Cornell
               Bowers CIS website.
+              <a class="project-link" href="https://devpost.com/software/gaitguard" target="_blank" rel="noopener">View on Devpost</a>
             </p>
             <div class="project-tags">
               <span class="tag">Machine learning</span>
@@ -75,6 +83,38 @@
             </div>
           </div>
           <div class="project-gallery">
+            <div class="gallery-grid">
+              <div class="gallery-thumb"><img src="img/gaitguard/gaitguard-1.png" alt="GaitGuard leg sensor" /></div>
+              <div class="gallery-thumb"><img src="img/gaitguard/gaitguard-2.png" alt="GaitGuard hardware components" /></div>
+              <div class="gallery-thumb"><img src="img/gaitguard/gaitguard-3.png" alt="GaitGuard team" /></div>
+              <div class="gallery-thumb"><img src="img/gaitguard/gaitguard-4.png" alt="YHack closing ceremony, overall winners" /></div>
+            </div>
+            <div class="gallery-overlay">
+              <button class="gallery-close" aria-label="Close">&times;</button>
+              <div class="gallery-overlay-grid">
+                <div class="gallery-overlay-thumb"><img src="img/gaitguard/gaitguard-1.png" alt="GaitGuard leg sensor" /></div>
+                <div class="gallery-overlay-thumb"><img src="img/gaitguard/gaitguard-2.png" alt="GaitGuard hardware components" /></div>
+                <div class="gallery-overlay-thumb"><img src="img/gaitguard/gaitguard-3.png" alt="GaitGuard team" /></div>
+                <div class="gallery-overlay-thumb"><img src="img/gaitguard/gaitguard-4.png" alt="YHack closing ceremony, overall winners" /></div>
+                <div class="gallery-overlay-thumb"><img src="img/gaitguard/gaitguard-5.png" alt="GaitGuard live dashboard on laptop and phone" /></div>
+                <div class="gallery-overlay-thumb"><img src="img/gaitguard/gaitguard-6.png" alt="Team celebrating after YHack" /></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-body">
+            <p class="project-name">GateAgent</p>
+            <p class="project-desc">
+              A continuation of GaitGuard with more of a research focus, still very much in
+              progress. The idea is to connect GaitGuard's approach with AI agents toward a
+              single, universal program that can independently diagnose and analyze movement,
+              efficiently, hasn't been done before. (Sorry, no pictures
+              yet :( )
+            </p>
+          </div>
+          <div class="project-gallery gallery-empty">
             <div class="gallery-grid">
               <div class="gallery-thumb"></div>
               <div class="gallery-thumb"></div>
@@ -96,45 +136,6 @@
             </div>
           </div>
         </div>
-
-        <a href="https://www.foilpal.com" class="project-card" target="_blank" rel="noopener">
-          <div class="project-body">
-            <p class="project-name">Foilpal</p>
-            <p class="project-desc">
-              Wearable, ML-powered wingfoiling trainer that analyzes motion and gives real-time
-              light cues to improve balance and reduce falls. Integrated an IMU, GPS, LEDs, and
-              a Raspberry Pi to collect movement data and adapt feedback based on prior riding
-              patterns.
-            </p>
-            <div class="project-tags">
-              <span class="tag">Python</span>
-              <span class="tag">LSTM</span>
-              <span class="tag">Raspberry Pi</span>
-              <span class="tag">Sensor fusion</span>
-            </div>
-          </div>
-          <div class="project-gallery">
-            <div class="gallery-grid">
-              <div class="gallery-thumb"></div>
-              <div class="gallery-thumb"></div>
-              <div class="gallery-thumb"></div>
-              <div class="gallery-thumb"></div>
-            </div>
-            <div class="gallery-overlay">
-              <button class="gallery-close" aria-label="Close">&times;</button>
-              <div class="gallery-overlay-grid">
-                <div class="gallery-overlay-thumb"></div>
-                <div class="gallery-overlay-thumb"></div>
-                <div class="gallery-overlay-thumb"></div>
-                <div class="gallery-overlay-thumb"></div>
-                <div class="gallery-overlay-thumb"></div>
-                <div class="gallery-overlay-thumb"></div>
-                <div class="gallery-overlay-thumb"></div>
-                <div class="gallery-overlay-thumb"></div>
-              </div>
-            </div>
-          </div>
-        </a>
 
       </div>
     </section>
@@ -150,12 +151,11 @@
           <a href="https://www.linkedin.com/in/paul-trusov-21a483322/" target="_blank" rel="noopener">
             <span class="footer-icon">in</span> paul-trusov
           </a>
-          <a href="https://www.foilpal.com" target="_blank" rel="noopener">
-            <span class="footer-icon">↗</span> foilpal.com
+          <a href="https://github.com/nerap2000" target="_blank" rel="noopener">
+            <span class="footer-icon">GH</span> nerap2000
           </a>
         </div>
         <div class="footer-info">
-          <p>Paul Trusov</p>
           <p>paulmtrusov [at] gmail [dot] com</p>
           <a href="img/cv/PaulTrusov.pdf" target="_blank">Resume</a>
         </div>

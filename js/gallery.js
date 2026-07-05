@@ -13,6 +13,15 @@ document.querySelectorAll('.project-gallery').forEach(function (gallery) {
   });
 });
 
+document.querySelectorAll('.gallery-overlay').forEach(function (overlay) {
+  overlay.addEventListener('click', function (e) {
+    if (!e.target.closest('.gallery-overlay-thumb') && !e.target.closest('.gallery-close')) {
+      var gallery = overlay.closest('.project-gallery');
+      gallery.classList.add('gallery-closed');
+    }
+  });
+});
+
 document.querySelectorAll('[data-lightbox]').forEach(function (trigger) {
   trigger.addEventListener('click', function (e) {
     e.preventDefault();

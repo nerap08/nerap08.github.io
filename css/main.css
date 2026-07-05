@@ -73,6 +73,10 @@ section {
   padding: 96px 0 0;
 }
 
+#about {
+  padding-top: 48px;
+}
+
 .section-first {
   padding-top: calc(var(--nav-h) + 64px);
 }
@@ -94,11 +98,12 @@ section {
 
 .pfp-placeholder {
   width: 160px;
-  height: 160px;
+  height: auto;
   flex-shrink: 0;
   border-radius: 10px;
   background: var(--surface);
-  border: 1px dashed var(--border);
+  border: 1px solid var(--border);
+  display: block;
 }
 
 .hero-eyebrow {
@@ -178,6 +183,13 @@ h1 {
   display: block;
 }
 
+.section-hint {
+  text-transform: none;
+  font-weight: 400;
+  letter-spacing: normal;
+  opacity: 0.7;
+}
+
 /* ── About ── */
 .about-text {
   font-size: 16px;
@@ -237,6 +249,13 @@ a.project-card:hover { background: var(--surface); }
   margin-bottom: 16px;
 }
 
+.project-link {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.project-link:hover { color: #1d4ed8; }
+
 .project-tags {
   display: flex;
   flex-wrap: wrap;
@@ -273,6 +292,15 @@ a.project-card:hover { background: var(--surface); }
   border-radius: 6px;
   background: var(--surface);
   border: 1px dashed var(--border);
+  overflow: hidden;
+}
+
+.gallery-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.82);
 }
 
 /* Hover and hold: pop the full set up as a fullscreen overlay */
@@ -302,6 +330,12 @@ a.project-card:hover { background: var(--surface); }
   transition: none !important;
 }
 
+/* No real photos yet — don't pop the empty placeholder overlay open on hover */
+.project-gallery.gallery-empty:hover .gallery-overlay {
+  opacity: 0;
+  visibility: hidden;
+}
+
 .gallery-overlay-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -316,11 +350,20 @@ a.project-card:hover { background: var(--surface); }
   background: rgba(255, 255, 255, 0.06);
   border: 1px dashed rgba(255, 255, 255, 0.3);
   transition: transform 0.2s ease;
+  overflow: hidden;
 }
 
 .gallery-overlay-thumb:hover {
-  transform: scale(1.6);
+  transform: scale(2);
   z-index: 2;
+}
+
+.gallery-overlay-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.82);
 }
 
 .gallery-close {
@@ -346,70 +389,55 @@ a.project-card:hover { background: var(--surface); }
 .gallery-close:hover { background: rgba(255, 255, 255, 0.12); }
 
 /* ── Publications & Articles ── */
-.pub-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
+.pub-group { margin-top: 48px; }
+
+.pub-list {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 
-.pub-card {
+.pub-item {
+  max-width: 640px;
+}
+
+.pub-citation {
+  font-size: 13.5px;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.pub-link-row {
   display: block;
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-  background: var(--bg);
-  text-decoration: none;
-  color: inherit;
   cursor: pointer;
   font: inherit;
-  text-align: left;
-  transition: border-color 0.15s ease, background 0.12s ease;
+  background: none;
+  border: none;
+  padding: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: opacity 0.12s ease;
 }
 
-.pub-card:hover {
+.pub-link-row:hover { opacity: 0.8; }
+
+.pub-link-thumb {
+  display: block;
+  width: 120px;
+  height: 76px;
+  border-radius: 6px;
   background: var(--surface);
-  border-color: #bbbbb3;
+  border: 1px dashed var(--border);
+  overflow: hidden;
 }
 
-.pub-thumb {
-  aspect-ratio: 16 / 10;
-  background: var(--surface);
-  border-bottom: 1px dashed var(--border);
-}
-
-.pub-info {
-  padding: 18px 20px 20px;
-}
-
-.pub-title {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text);
-  line-height: 1.5;
-  margin-bottom: 8px;
-}
-
-.pub-meta {
-  font-size: 12.5px;
-  font-weight: 400;
-  color: var(--muted);
-  line-height: 1.6;
-}
-
-.pub-venue {
-  font-weight: 400;
-  color: var(--text);
-}
-
-.pub-kind {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 8px;
+.pub-link-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* ── Poster lightbox (click to open) ── */
@@ -436,11 +464,15 @@ a.project-card:hover { background: var(--surface); }
 .lightbox-img {
   max-width: 100%;
   max-height: 100%;
+  border-radius: 10px;
+  display: block;
+}
+
+.lightbox-img:not(img) {
   width: 520px;
   aspect-ratio: 3 / 4;
   background: rgba(255, 255, 255, 0.06);
   border: 1px dashed rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
 }
 
 /* ── Posts ── */
@@ -453,6 +485,7 @@ a.project-card:hover { background: var(--surface); }
 }
 
 .post-card {
+  position: relative;
   flex: 0 0 320px;
   scroll-snap-align: start;
   border: 1px solid var(--border);
@@ -467,6 +500,27 @@ a.project-card:hover { background: var(--surface); }
   gap: 10px;
   margin-bottom: 12px;
 }
+
+.post-delete {
+  display: none;
+  margin-left: auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.post-delete:hover { background: var(--surface); color: var(--text); }
+
+body.edit-unlocked .post-delete { display: flex; }
 
 .post-avatar {
   width: 36px;
@@ -590,7 +644,7 @@ footer {
   transform: translateX(-50%) translateY(0);
 }
 
-/* ── Start-a-post bar (visible once unlocked) ── */
+/* ── Start-a-post bar (visible once unlocked via Google sign-in) ── */
 .start-post-bar {
   display: none;
   align-items: center;
@@ -609,6 +663,8 @@ footer {
 }
 
 .start-post-bar:hover { border-color: #bbbbb3; }
+
+body.edit-unlocked .start-post-bar { display: flex; }
 
 body.edit-unlocked .start-post-bar { display: flex; }
 
@@ -810,7 +866,7 @@ body.edit-unlocked .start-post-bar { display: flex; }
   .nav-links { gap: 20px; }
 
   .hero-row { flex-direction: column-reverse; align-items: flex-start; }
-  .pfp-placeholder { width: 120px; height: 120px; }
+  .pfp-placeholder { width: 120px; height: auto; }
 
   .project-card { flex-direction: column; }
 

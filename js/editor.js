@@ -75,12 +75,27 @@ function formatPostDate(d) {
   return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function addPostCard(text, dateStr, images) {
+function deletePostFromStorage(id) {
+  var saved = JSON.parse(localStorage.getItem('paulPosts') || '[]');
+  saved = saved.filter(function (p) { return p.id !== id; });
+  localStorage.setItem('paulPosts', JSON.stringify(saved));
+}
+
+function wireDeleteButton(btn, card) {
+  btn.addEventListener('click', function () {
+    var id = card.getAttribute('data-id');
+    if (id && id !== 'placeholder') deletePostFromStorage(id);
+    card.remove();
+  });
+}
+
+function addPostCard(text, dateStr, images, id) {
   var scroll = document.querySelector('.posts-scroll');
   if (!scroll) return;
 
   var card = document.createElement('div');
   card.className = 'post-card';
+  card.setAttribute('data-id', id);
 
   var head = document.createElement('div');
   head.className = 'post-head';
@@ -98,8 +113,16 @@ function addPostCard(text, dateStr, images) {
   nameWrap.appendChild(name);
   nameWrap.appendChild(date);
 
+  var deleteBtn = document.createElement('button');
+  deleteBtn.type = 'button';
+  deleteBtn.className = 'post-delete';
+  deleteBtn.setAttribute('aria-label', 'Delete post');
+  deleteBtn.innerHTML = '&times;';
+  wireDeleteButton(deleteBtn, card);
+
   head.appendChild(avatar);
   head.appendChild(nameWrap);
+  head.appendChild(deleteBtn);
   card.appendChild(head);
 
   if (text) {
@@ -123,16 +146,21 @@ function addPostCard(text, dateStr, images) {
 
 function loadSavedPosts() {
   var saved = JSON.parse(localStorage.getItem('paulPosts') || '[]');
-  saved.forEach(function (p) { addPostCard(p.text, p.date, p.images); });
+  saved.forEach(function (p) { addPostCard(p.text, p.date, p.images, p.id); });
 }
 
-function savePost(text, dateStr, images) {
+function savePost(text, dateStr, images, id) {
   var saved = JSON.parse(localStorage.getItem('paulPosts') || '[]');
-  saved.unshift({ text: text, date: dateStr, images: images });
+  saved.unshift({ id: id, text: text, date: dateStr, images: images });
   localStorage.setItem('paulPosts', JSON.stringify(saved));
 }
 
 loadSavedPosts();
+
+document.querySelectorAll('.post-card[data-id] .post-delete').forEach(function (btn) {
+  var card = btn.closest('.post-card');
+  if (card.getAttribute('data-id') === 'placeholder') wireDeleteButton(btn, card);
+});
 
 var openComposerBtn = document.getElementById('open-composer');
 var composer = document.getElementById('post-composer');
@@ -209,8 +237,9 @@ if (openComposerBtn && composer) {
     var text = composerText.value.trim();
     if (!text && pendingImages.length === 0) return;
     var dateStr = formatPostDate(new Date());
-    addPostCard(text, dateStr, pendingImages);
-    savePost(text, dateStr, pendingImages);
+    var id = Date.now().toString();
+    addPostCard(text, dateStr, pendingImages, id);
+    savePost(text, dateStr, pendingImages, id);
     composer.classList.remove('modal-open');
     resetComposer();
   });
